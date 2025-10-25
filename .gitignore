@@ -1,8 +1,13 @@
-# Ignorar vídeo local (será hospedado no Google Drive)
-*.mp4
+# Ignorar vídeo original (muito grande)
+matechique001.mp4
+
+# Outros formatos de vídeo
 *.mov
 *.avi
 *.mkv
+
+# Permitir vídeo comprimido
+!matechique001_compressed.mp4
 
 # macOS
 .DS_Store

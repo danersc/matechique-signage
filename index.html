@@ -22,15 +22,15 @@
             position: relative;
             width: 100%;
             height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        video {
             width: 100%;
             height: 100%;
-            border: none;
+            object-fit: cover;
         }
 
         #loading {
@@ -41,57 +41,44 @@
             color: white;
             font-size: 24px;
             font-family: Arial, sans-serif;
-            z-index: 100;
-        }
-
-        #instructions {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px 25px;
-            border-radius: 8px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            text-align: center;
-            z-index: 100;
-            display: none;
         }
     </style>
 </head>
 <body>
     <div id="videoContainer">
-        <iframe
-            id="player"
-            src="https://drive.google.com/file/d/1jSkYuaUQz0TErKS9KH4mfLKuoKtcr6Cs/preview"
-            allow="autoplay; fullscreen"
-            allowfullscreen>
-        </iframe>
+        <video id="player" autoplay muted loop playsinline></video>
         <div id="loading">Carregando vídeo...</div>
-        <div id="instructions">
-            <strong>Nota:</strong> O Google Drive pode mostrar controles.<br>
-            Clique em "Play" e o vídeo ficará em loop automaticamente.
-        </div>
     </div>
 
     <script>
+        const player = document.getElementById('player');
         const loading = document.getElementById('loading');
-        const instructions = document.getElementById('instructions');
 
-        // Esconder loading após alguns segundos
-        setTimeout(() => {
+        // Vídeo local comprimido
+        player.src = 'matechique001_compressed.mp4';
+
+        // Quando vídeo carrega e está pronto
+        player.addEventListener('canplay', () => {
             loading.style.display = 'none';
-            instructions.style.display = 'block';
+            player.play().catch(error => {
+                console.error('Erro ao reproduzir:', error);
+            });
+        });
 
-            // Esconder instruções após 5 segundos
-            setTimeout(() => {
-                instructions.style.display = 'none';
-            }, 5000);
-        }, 2000);
+        // Tratamento de erros
+        player.addEventListener('error', (e) => {
+            console.error('Erro no vídeo:', e);
+            loading.textContent = 'Erro ao carregar vídeo';
+        });
 
-        // Fullscreen ao clicar
+        // Prevenir que o vídeo pare (útil para TVs)
+        setInterval(() => {
+            if (player.paused) {
+                player.play();
+            }
+        }, 10000);
+
+        // Fullscreen ao clicar (útil para testes)
         document.addEventListener('click', () => {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
@@ -109,15 +96,10 @@
                     document.exitFullscreen();
                 }
             }
-            // Tecla 'i' para mostrar/esconder instruções
-            if (e.key === 'i' || e.key === 'I') {
-                instructions.style.display = instructions.style.display === 'none' ? 'block' : 'none';
-            }
         });
 
         console.log('Digital Signage Matechique iniciado!');
-        console.log('Pressione "f" para fullscreen');
-        console.log('Pressione "i" para mostrar/esconder instruções');
+        console.log('Pressione "f" para fullscreen ou clique na tela');
     </script>
 </body>
 </html>
