@@ -2,97 +2,135 @@
 
 Página web para exibir vídeo em loop e tela cheia, ideal para TVs e displays digitais.
 
-## Como configurar o vídeo no Google Drive
+## URL do Projeto
 
-### Passo 1: Upload do vídeo
+**https://danersc.github.io/matechique-signage/**
 
-1. Acesse [Google Drive](https://drive.google.com)
-2. Faça login com sua conta Google
-3. Clique em **"Novo"** > **"Upload de arquivo"**
-4. Selecione o vídeo `matechique001.mp4`
-5. Aguarde o upload completar
+## Características
 
-### Passo 2: Tornar o vídeo público
+✅ Vídeo em loop infinito
+✅ Reprodução automática (autoplay)
+✅ Otimizado para TVs
+✅ Sem dependências externas
+✅ Vídeo hospedado localmente (90MB)
 
-1. Clique com botão direito no vídeo que você fez upload
-2. Selecione **"Compartilhar"**
-3. Clique em **"Alterar para qualquer pessoa com o link"**
-4. Certifique-se que está marcado como **"Visualizador"**
-5. Clique em **"Concluído"**
+## Como usar em uma TV
 
-### Passo 3: Obter o ID do arquivo
+### Opção 1: Navegador Nativo (Recomendado)
 
-1. Clique com botão direito no vídeo novamente
-2. Selecione **"Obter link"**
-3. Você verá um link como este:
-   ```
-   https://drive.google.com/file/d/1a2b3c4d5e6f7g8h9i0j/view?usp=sharing
-   ```
-4. Copie apenas a parte que está entre `/d/` e `/view` (exemplo: `1a2b3c4d5e6f7g8h9i0j`)
+A página já está otimizada para TVs. O vídeo ocupa 100% da tela automaticamente.
 
-### Passo 4: Atualizar o código
+**Setup inicial:**
+1. Abra o navegador da TV
+2. Acesse: `https://danersc.github.io/matechique-signage/`
+3. **Clique uma vez** na tela (usar controle remoto)
+4. A mensagem desaparecerá em 8 segundos
+5. O vídeo rodará em loop infinito
 
-1. Abra o arquivo `index.html`
-2. Encontre a linha (aproximadamente linha 65):
-   ```javascript
-   player.src = 'https://drive.google.com/uc?export=download&id=COLOQUE_SEU_ID_AQUI';
-   ```
-3. Substitua `COLOQUE_SEU_ID_AQUI` pelo ID que você copiou
-4. Exemplo final:
-   ```javascript
-   player.src = 'https://drive.google.com/uc?export=download&id=1a2b3c4d5e6f7g8h9i0j';
-   ```
-5. Salve o arquivo
+**Para TVs Samsung (Tizen):**
+- Use o app "Internet"
+- Adicione a URL aos favoritos
+- Configure como página inicial se disponível
 
-### Passo 5: Fazer commit e push
+**Para TVs LG (webOS):**
+- Use o navegador "Web Browser"
+- Adicione aos favoritos
+- Configure para iniciar automaticamente
 
-```bash
-git add index.html
-git commit -m "Atualiza link do vídeo do Google Drive"
-git push
-```
+**Para Android TV:**
+- Use Google Chrome
+- Instale extensão "Kiosk Mode" se disponível
+- Ou use app "Fully Kiosk Browser"
 
-## Alternativa: Usar outro serviço
+### Opção 2: Modo Kiosk/Fullscreen
 
-Se preferir usar outro serviço de hospedagem:
+Alguns navegadores de TV permitem configurar:
+1. Abrir URL específica ao ligar
+2. Modo kiosk (sem barras de navegação)
+3. Fullscreen automático
+4. Desabilitar screensaver
 
-### Dropbox
-1. Faça upload do vídeo
-2. Gere link compartilhável
-3. **Importante:** Troque `dl=0` por `dl=1` no final da URL
-4. Use este link no `player.src`
+Consulte o manual da sua TV para ativar estas opções.
 
-### Cloudinary (recomendado para vídeos)
-1. Crie conta gratuita em [cloudinary.com](https://cloudinary.com)
-2. Faça upload do vídeo
-3. Copie a URL direta do vídeo
-4. Use no `player.src`
+### Opção 3: Dispositivo Externo
 
-## Como usar
+Para controle total, use:
+- **Raspberry Pi** com Chromium em modo kiosk
+- **Fire TV Stick** com Silk Browser
+- **Chromecast** com casting permanente
+- **Mini PC** com Chrome em fullscreen
 
-1. Acesse a página pelo GitHub Pages
-2. Clique na tela para entrar em tela cheia
-3. Ou pressione a tecla `F` para fullscreen
-4. O vídeo tocará automaticamente em loop
+## Teclas de Atalho
 
-## Teclas de atalho
+- **F** - Alternar tela cheia
+- **H** - Esconder mensagem manualmente
+- **Clique/Toque** - Ativar fullscreen
 
-- `F` - Alternar tela cheia
-- Clique - Entrar em tela cheia
+## Especificações Técnicas
+
+**Vídeo:**
+- Formato: MP4 (H.264)
+- Resolução: 1080x1920 (vertical)
+- Duração: 7min 36s
+- Tamanho: 90MB
+- Bitrate: 1.7 Mbps
+
+**Requisitos:**
+- Conexão de internet para primeira carga
+- Navegador moderno (Chrome, Firefox, Safari, Edge)
+- Suporte a HTML5 video
 
 ## Troubleshooting
 
 ### O vídeo não carrega
-- Verifique se o link do Google Drive está correto
-- Certifique-se que o vídeo está público
-- Teste o link diretamente no navegador
+- Verifique a conexão de internet
+- Limpe o cache do navegador
+- Recarregue a página (F5 ou Ctrl+R)
 
 ### Vídeo não toca automaticamente
-- Alguns navegadores bloqueiam autoplay
-- Clique na tela para iniciar a reprodução
-- Em TVs, certifique-se que o navegador permite autoplay
+- **Normal**: Alguns navegadores bloqueiam autoplay
+- **Solução**: Clique uma vez na tela
+- Em TVs, certifique-se que não há configuração bloqueando autoplay
 
-### Para TVs Samsung/LG
-- Use o navegador nativo da TV
-- Configure a página como página inicial
-- Ative o modo quiosque se disponível
+### Mensagem não desaparece
+- Pressione tecla **H** para esconder
+- Ou aguarde 8 segundos após o vídeo carregar
+- Clique na mensagem para esconder
+
+### Fullscreen não ativa
+- **Em TVs**: Não é necessário! O vídeo já ocupa 100% da tela
+- **Em computador**: Clique na tela ou pressione **F**
+- Alguns navegadores bloqueiam fullscreen automático por segurança
+
+### Vídeo para de tocar
+- A página tem proteção contra isso
+- Verifica a cada 10 segundos e retoma automaticamente
+- Se persistir, verifique configurações de energia da TV
+
+## Atualizando o Vídeo
+
+Para substituir o vídeo:
+
+1. Comprima o vídeo para < 100MB:
+   ```bash
+   ffmpeg -i seu_video.mp4 -c:v libx264 -b:v 1700k -preset medium -c:a aac -b:a 128k -movflags +faststart matechique001_compressed.mp4
+   ```
+
+2. Substitua o arquivo `matechique001_compressed.mp4`
+
+3. Faça commit e push:
+   ```bash
+   git add matechique001_compressed.mp4
+   git commit -m "Atualiza vídeo"
+   git push
+   ```
+
+4. Aguarde 2-3 minutos para o GitHub Pages atualizar
+
+## Suporte
+
+Para dúvidas ou problemas, abra uma issue no repositório.
+
+## Licença
+
+Projeto de uso livre para digital signage.
