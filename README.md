@@ -2,33 +2,74 @@
 
 Página web para exibir vídeo em loop e tela cheia, ideal para TVs e displays digitais.
 
-## Versões Disponíveis
+## URL do Projeto
 
-### 🖥️ Versão Normal (Recomendada)
 **https://danersc.github.io/matechique-signage/**
 
-Use esta versão quando:
-- A TV/monitor estiver em **posição normal** (horizontal/paisagem)
-- O sistema da TV reconhecer a orientação corretamente
-- Para testes em computador
+### 🔄 Sistema de Rotação Inteligente
 
-### 🔄 Versão Rotacionada 90°
-**https://danersc.github.io/matechique-signage/index-rotated.html**
+A página agora possui **controles de rotação interativos**!
 
-Use esta versão quando:
-- A TV estiver **fisicamente na vertical** (modo retrato)
-- Mas o **sistema da TV não permitir rotação** de tela
-- O vídeo aparecer "deitado" na versão normal
+**3 formas de usar:**
 
-**Como funciona:** O vídeo é rotacionado 90° via CSS. Você verá o vídeo "deitado" no computador, mas ficará correto quando a TV estiver na vertical.
+#### 1️⃣ Controles Visuais (Recomendado)
+- Acesse a URL principal
+- Na primeira vez, você verá 4 botões de rotação
+- Escolha a orientação correta para sua TV:
+  - ⬆️ **Normal (0°)** - TV horizontal ou vertical reconhecida
+  - ➡️ **Direita (90°)** - TV vertical, rotacionar para direita
+  - ⬇️ **Invertido (180°)** - TV de cabeça para baixo
+  - ⬅️ **Esquerda (270°)** - TV vertical, rotacionar para esquerda
+- Clique em "Iniciar Vídeo"
+- **A escolha é salva automaticamente!** Próximas vezes carrega direto
+
+#### 2️⃣ Parâmetro de URL (Para TVs fixas)
+Se você já sabe a rotação necessária, use:
+- **Normal:** `https://danersc.github.io/matechique-signage/`
+- **90° direita:** `https://danersc.github.io/matechique-signage/?rotate=90`
+- **180° invertido:** `https://danersc.github.io/matechique-signage/?rotate=180`
+- **270° esquerda:** `https://danersc.github.io/matechique-signage/?rotate=270`
+
+#### 3️⃣ Teclas de Atalho (Durante reprodução)
+- **← →** - Rotacionar vídeo com setas
+- **R** - Mostrar/esconder info de rotação atual
+- **F** - Fullscreen
+- **H** - Esconder mensagens
 
 ## Características
 
 ✅ Vídeo em loop infinito
 ✅ Reprodução automática (autoplay)
+✅ **Rotação ajustável (0°, 90°, 180°, 270°)**
+✅ **Lembra a configuração escolhida**
 ✅ Otimizado para TVs
 ✅ Sem dependências externas
 ✅ Vídeo hospedado localmente (90MB)
+
+## Como Funciona a Rotação
+
+O sistema de rotação permite que você ajuste o vídeo para **qualquer orientação da TV**:
+
+**Cenário 1: TV Horizontal Normal**
+- Use rotação **0°** (Normal)
+- Vídeo aparece vertical na tela horizontal
+
+**Cenário 2: TV Física Vertical + Sistema Horizontal**
+- TV está virada 90° fisicamente, mas sistema não sabe
+- Use rotação **90°** ou **270°** dependendo do lado
+- O vídeo será rotacionado para compensar
+
+**Cenário 3: Teste no Computador**
+- Abra a página, escolha rotação 90°
+- Você verá o vídeo "deitado"
+- Vire sua cabeça 90° → vídeo estará correto!
+- Na TV real que está virada, ficará perfeito
+
+**Memória Automática:**
+- Primeira vez: escolhe a rotação
+- Sistema salva no navegador (localStorage)
+- Próximas vezes: carrega automaticamente na rotação salva
+- Para mudar: use teclas ← → ou acesse com `?rotate=` diferente
 
 ## Como usar em uma TV
 

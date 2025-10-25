@@ -33,6 +33,28 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        /* Classes de rotação */
+        video.rotate-0 {
+            transform: rotate(0deg);
+        }
+
+        video.rotate-90 {
+            transform: rotate(90deg);
+            width: 100vh;
+            height: 100vw;
+        }
+
+        video.rotate-180 {
+            transform: rotate(180deg);
+        }
+
+        video.rotate-270 {
+            transform: rotate(270deg);
+            width: 100vh;
+            height: 100vw;
         }
 
         #overlay {
@@ -41,14 +63,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.9);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 1000;
             transition: opacity 0.5s;
-            cursor: pointer;
         }
 
         #overlay.hidden {
@@ -62,6 +83,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
+            margin-bottom: 30px;
         }
 
         #loading {
@@ -79,16 +101,124 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+
+        #rotationControls {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #rotationControls.visible {
+            display: flex;
+        }
+
+        #rotationButtons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .rotation-btn {
+            background: #333;
+            color: white;
+            border: 2px solid #666;
+            padding: 20px 30px;
+            font-size: 18px;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .rotation-btn:hover {
+            background: #555;
+            border-color: #888;
+            transform: scale(1.05);
+        }
+
+        .rotation-btn.active {
+            background: #0066cc;
+            border-color: #0088ff;
+        }
+
+        #controlsTitle {
+            color: #ffcc00;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #startButton {
+            background: #00aa00;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        #startButton:hover {
+            background: #00cc00;
+            transform: scale(1.05);
+        }
+
+        #rotationInfo {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            z-index: 999;
+            display: none;
+        }
+
+        #rotationInfo.visible {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div id="videoContainer">
-        <video id="player" autoplay muted loop playsinline></video>
+        <video id="player" autoplay muted loop playsinline class="rotate-0"></video>
     </div>
 
     <div id="overlay">
         <div id="message">Carregando vídeo...</div>
         <div id="loading" class="pulse">●</div>
+
+        <div id="rotationControls">
+            <div id="controlsTitle">⚙️ Escolha a rotação do vídeo</div>
+            <div id="rotationButtons">
+                <button class="rotation-btn active" data-rotation="0">
+                    ⬆️<br>Normal<br>(0°)
+                </button>
+                <button class="rotation-btn" data-rotation="90">
+                    ➡️<br>Direita<br>(90°)
+                </button>
+                <button class="rotation-btn" data-rotation="180">
+                    ⬇️<br>Invertido<br>(180°)
+                </button>
+                <button class="rotation-btn" data-rotation="270">
+                    ⬅️<br>Esquerda<br>(270°)
+                </button>
+            </div>
+            <button id="startButton">▶️ Iniciar Vídeo</button>
+        </div>
+    </div>
+
+    <div id="rotationInfo">
+        Rotação: <span id="currentRotation">0°</span><br>
+        Pressione R para ajustar
     </div>
 
     <script>
@@ -96,18 +226,71 @@
         const overlay = document.getElementById('overlay');
         const message = document.getElementById('message');
         const loading = document.getElementById('loading');
+        const rotationControls = document.getElementById('rotationControls');
+        const rotationButtons = document.querySelectorAll('.rotation-btn');
+        const startButton = document.getElementById('startButton');
+        const rotationInfo = document.getElementById('rotationInfo');
+        const currentRotationSpan = document.getElementById('currentRotation');
 
         let videoReady = false;
-        let userInteracted = false;
+        let currentRotation = 0;
+        let controlsShown = false;
 
         // Vídeo local comprimido
         player.src = 'matechique001_compressed.mp4';
+
+        // Verificar parâmetro de URL (?rotate=90)
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlRotation = urlParams.get('rotate');
+
+        // Verificar localStorage
+        const savedRotation = localStorage.getItem('videoRotation');
+
+        // Definir rotação inicial
+        if (urlRotation !== null) {
+            currentRotation = parseInt(urlRotation);
+        } else if (savedRotation !== null) {
+            currentRotation = parseInt(savedRotation);
+        }
+
+        // Aplicar rotação inicial
+        applyRotation(currentRotation);
+
+        // Função para aplicar rotação
+        function applyRotation(rotation) {
+            // Normalizar rotação (0, 90, 180, 270)
+            currentRotation = ((rotation % 360) + 360) % 360;
+
+            // Remover todas as classes de rotação
+            player.classList.remove('rotate-0', 'rotate-90', 'rotate-180', 'rotate-270');
+
+            // Adicionar classe correta
+            player.classList.add(`rotate-${currentRotation}`);
+
+            // Atualizar UI
+            currentRotationSpan.textContent = `${currentRotation}°`;
+
+            // Atualizar botões ativos
+            rotationButtons.forEach(btn => {
+                const btnRotation = parseInt(btn.dataset.rotation);
+                if (btnRotation === currentRotation) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Salvar no localStorage
+            localStorage.setItem('videoRotation', currentRotation);
+
+            console.log(`Rotação aplicada: ${currentRotation}°`);
+        }
 
         // Função para tentar entrar em fullscreen
         function tryFullscreen() {
             if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().catch(err => {
-                    console.log('Fullscreen não disponível ou bloqueado:', err.message);
+                    console.log('Fullscreen não disponível:', err.message);
                 });
             }
         }
@@ -118,20 +301,30 @@
             player.play().then(() => {
                 console.log('Vídeo reproduzindo');
 
-                // Tentar fullscreen automático (vai falhar na maioria dos navegadores)
-                tryFullscreen();
+                // Se rotação já está definida (URL ou localStorage), pular controles
+                if (urlRotation !== null || savedRotation !== null) {
+                    loading.style.display = 'none';
+                    message.textContent = 'Clique na tela para tela cheia';
 
-                // Mostrar mensagem para clicar (caso fullscreen automático falhe)
-                message.textContent = 'Clique na tela para tela cheia';
-                loading.style.display = 'none';
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        rotationInfo.classList.add('visible');
 
-                // Esconder overlay após 8 segundos
-                setTimeout(() => {
-                    overlay.classList.add('hidden');
-                }, 8000);
+                        // Esconder info após 10 segundos
+                        setTimeout(() => {
+                            rotationInfo.classList.remove('visible');
+                        }, 10000);
+                    }, 3000);
+                } else {
+                    // Mostrar controles de rotação
+                    loading.style.display = 'none';
+                    message.textContent = 'Ajuste a rotação do vídeo';
+                    rotationControls.classList.add('visible');
+                    controlsShown = true;
+                }
             }).catch(error => {
                 console.error('Erro ao reproduzir:', error);
-                message.textContent = 'Clique na tela para iniciar';
+                message.textContent = 'Clique para iniciar';
                 loading.style.display = 'none';
             });
         });
@@ -143,35 +336,52 @@
             loading.style.display = 'none';
         });
 
-        // Ao clicar, entrar em fullscreen e esconder overlay
-        overlay.addEventListener('click', () => {
-            if (!userInteracted) {
-                userInteracted = true;
+        // Botões de rotação
+        rotationButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const rotation = parseInt(btn.dataset.rotation);
+                applyRotation(rotation);
+            });
+        });
+
+        // Botão iniciar
+        startButton.addEventListener('click', () => {
+            overlay.classList.add('hidden');
+            rotationInfo.classList.add('visible');
+            tryFullscreen();
+
+            if (player.paused) {
+                player.play();
+            }
+
+            // Esconder info após 10 segundos
+            setTimeout(() => {
+                rotationInfo.classList.remove('visible');
+            }, 10000);
+        });
+
+        // Clique no overlay (quando controles não estão visíveis)
+        overlay.addEventListener('click', (e) => {
+            if (!controlsShown && e.target === overlay) {
+                overlay.classList.add('hidden');
                 tryFullscreen();
 
                 if (player.paused) {
                     player.play();
                 }
             }
-            overlay.classList.add('hidden');
         });
 
-        // Clique no vídeo também ativa fullscreen
-        document.addEventListener('click', (e) => {
-            if (e.target !== overlay && !document.fullscreenElement) {
-                tryFullscreen();
-            }
-        });
-
-        // Prevenir que o vídeo pare (útil para TVs)
+        // Prevenir que o vídeo pare
         setInterval(() => {
             if (player.paused && videoReady) {
                 player.play().catch(err => console.log('Erro ao retomar:', err));
             }
         }, 10000);
 
-        // Tecla 'f' para fullscreen
+        // Teclas de atalho
         document.addEventListener('keydown', (e) => {
+            // Fullscreen
             if (e.key === 'f' || e.key === 'F') {
                 if (!document.fullscreenElement) {
                     tryFullscreen();
@@ -179,15 +389,32 @@
                     document.exitFullscreen();
                 }
             }
-            // Tecla 'h' para esconder overlay manualmente
+
+            // Esconder overlay
             if (e.key === 'h' || e.key === 'H') {
                 overlay.classList.add('hidden');
+            }
+
+            // Mostrar/esconder info de rotação
+            if (e.key === 'r' || e.key === 'R') {
+                rotationInfo.classList.toggle('visible');
+            }
+
+            // Rotacionar com setas
+            if (e.key === 'ArrowLeft') {
+                applyRotation(currentRotation - 90);
+                rotationInfo.classList.add('visible');
+            }
+            if (e.key === 'ArrowRight') {
+                applyRotation(currentRotation + 90);
+                rotationInfo.classList.add('visible');
             }
         });
 
         console.log('Digital Signage Matechique iniciado!');
-        console.log('Pressione "f" para fullscreen ou clique na tela');
-        console.log('Pressione "h" para esconder mensagem');
+        console.log('Rotação atual:', currentRotation + '°');
+        console.log('Teclas: F=fullscreen, R=info rotação, ←→=rotacionar');
+        console.log('URL: Adicione ?rotate=90 para rotação automática');
     </script>
 </body>
 </html>
