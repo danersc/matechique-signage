@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matechique Digital Signage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        #videoContainer {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="videoContainer">
+        <video id="player" autoplay muted loop playsinline></video>
+        <div id="loading">Carregando vídeo...</div>
+    </div>
+
+    <script>
+        const player = document.getElementById('player');
+        const loading = document.getElementById('loading');
+
+        // IMPORTANTE: Substitua o link abaixo pelo link direto do seu vídeo no Google Drive
+        // Para obter o link direto do Google Drive:
+        // 1. Faça upload do vídeo no Google Drive
+        // 2. Clique com botão direito > Compartilhar > "Qualquer pessoa com o link"
+        // 3. Copie o ID do arquivo (está na URL após /d/ e antes de /view)
+        // 4. Use este formato: https://drive.google.com/uc?export=download&id=SEU_ID_AQUI
+
+        // Link do vídeo (SUBSTITUA pelo link do Google Drive)
+        player.src = 'https://drive.google.com/uc?export=download&id=COLOQUE_SEU_ID_AQUI';
+
+        // Quando vídeo carrega e está pronto
+        player.addEventListener('canplay', () => {
+            loading.style.display = 'none';
+            player.play().catch(error => {
+                console.error('Erro ao reproduzir:', error);
+            });
+        });
+
+        // Tratamento de erros
+        player.addEventListener('error', (e) => {
+            console.error('Erro no vídeo:', e);
+            loading.textContent = 'Erro ao carregar vídeo';
+        });
+
+        // Prevenir que o vídeo pare (útil para TVs)
+        setInterval(() => {
+            if (player.paused) {
+                player.play();
+            }
+        }, 10000);
+
+        // Fullscreen ao clicar (útil para testes)
+        document.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Fullscreen não disponível:', err);
+                });
+            }
+        });
+
+        // Tecla 'f' para fullscreen
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'f' || e.key === 'F') {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+        });
+
+        console.log('Digital Signage Matechique iniciado!');
+        console.log('Pressione "f" para fullscreen ou clique na tela');
+    </script>
+</body>
+</html>
