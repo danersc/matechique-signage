@@ -2,9 +2,25 @@
 
 Página web para exibir vídeo em loop e tela cheia, ideal para TVs e displays digitais.
 
-## URL do Projeto
+## Versões Disponíveis
 
+### 🖥️ Versão Normal (Recomendada)
 **https://danersc.github.io/matechique-signage/**
+
+Use esta versão quando:
+- A TV/monitor estiver em **posição normal** (horizontal/paisagem)
+- O sistema da TV reconhecer a orientação corretamente
+- Para testes em computador
+
+### 🔄 Versão Rotacionada 90°
+**https://danersc.github.io/matechique-signage/index-rotated.html**
+
+Use esta versão quando:
+- A TV estiver **fisicamente na vertical** (modo retrato)
+- Mas o **sistema da TV não permitir rotação** de tela
+- O vídeo aparecer "deitado" na versão normal
+
+**Como funciona:** O vídeo é rotacionado 90° via CSS. Você verá o vídeo "deitado" no computador, mas ficará correto quando a TV estiver na vertical.
 
 ## Características
 
