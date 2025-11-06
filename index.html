@@ -237,7 +237,7 @@
         let controlsShown = false;
 
         // Vídeo local comprimido
-        player.src = 'matechique001_compressed.mp4';
+        player.src = 'matechique002.mp4';
 
         // Verificar parâmetro de URL (?rotate=90)
         const urlParams = new URLSearchParams(window.location.search);
@@ -304,28 +304,63 @@
                 // Se rotação já está definida (URL ou localStorage), pular controles
                 if (urlRotation !== null || savedRotation !== null) {
                     loading.style.display = 'none';
-                    message.textContent = 'Clique na tela para tela cheia';
+                    message.textContent = `Vídeo iniciado - Rotação: ${currentRotation}°`;
 
+                    // Desaparecer automaticamente após 3 segundos
                     setTimeout(() => {
                         overlay.classList.add('hidden');
                         rotationInfo.classList.add('visible');
 
-                        // Esconder info após 10 segundos
+                        // Esconder info após 8 segundos
                         setTimeout(() => {
                             rotationInfo.classList.remove('visible');
-                        }, 10000);
+                        }, 8000);
                     }, 3000);
                 } else {
                     // Mostrar controles de rotação
                     loading.style.display = 'none';
-                    message.textContent = 'Ajuste a rotação do vídeo';
+                    message.innerHTML = 'Ajuste a rotação do vídeo (opcional)<br><small style="color: #ffcc00;">Iniciará automaticamente em 30s</small>';
                     rotationControls.classList.add('visible');
                     controlsShown = true;
+
+                    // Contagem regressiva no botão
+                    let countdown = 30;
+                    const countdownInterval = setInterval(() => {
+                        if (!controlsShown) {
+                            clearInterval(countdownInterval);
+                            return;
+                        }
+                        countdown--;
+                        startButton.textContent = `▶️ Iniciar Vídeo (${countdown}s)`;
+
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                        }
+                    }, 1000);
+
+                    // Iniciar automaticamente após 30 segundos se não escolher
+                    setTimeout(() => {
+                        if (controlsShown) {
+                            console.log('Auto-iniciando com rotação padrão (0°)');
+                            controlsShown = false;
+                            overlay.classList.add('hidden');
+                            rotationInfo.classList.add('visible');
+
+                            setTimeout(() => {
+                                rotationInfo.classList.remove('visible');
+                            }, 8000);
+                        }
+                    }, 30000);
                 }
             }).catch(error => {
                 console.error('Erro ao reproduzir:', error);
-                message.textContent = 'Clique para iniciar';
+                message.textContent = 'Erro no autoplay - Aguarde...';
                 loading.style.display = 'none';
+
+                // Tentar novamente após 2 segundos
+                setTimeout(() => {
+                    player.play();
+                }, 2000);
             });
         });
 
@@ -346,6 +381,7 @@
 
         // Botão iniciar
         startButton.addEventListener('click', () => {
+            controlsShown = false; // Marca que controles foram usados
             overlay.classList.add('hidden');
             rotationInfo.classList.add('visible');
             tryFullscreen();
@@ -354,10 +390,10 @@
                 player.play();
             }
 
-            // Esconder info após 10 segundos
+            // Esconder info após 8 segundos
             setTimeout(() => {
                 rotationInfo.classList.remove('visible');
-            }, 10000);
+            }, 8000);
         });
 
         // Clique no overlay (quando controles não estão visíveis)
